@@ -1,3 +1,4 @@
+include(myappend).
 myreverse([], []).
 myreverse([X|L], R):-
 	myreverse(L, S),
