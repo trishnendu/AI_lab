@@ -1,3 +1,4 @@
+include(myselect).
 permutatelist([], []).
 permutatelist([H|R], L):-
     permutatelist(R, T),
