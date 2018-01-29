@@ -1,5 +1,6 @@
 include(myselect).
 permutatelist([], []).
-permutatelist([H|R], L):-
-    permutatelist(R, T),
-    myselect(H, L, T).
+permutatelist(L, [H|R]):-
+    myselect(H, L, T),
+    permutatelist(T, R).
+    

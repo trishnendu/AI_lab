@@ -5,6 +5,7 @@ permutationsort(L, S):-
     !.
 permutationsort(L, S):-
     permutationsort(L, S).    
+
 ifordered([]).
 ifordered([X]).
 ifordered([X|[Y|R]]):-
