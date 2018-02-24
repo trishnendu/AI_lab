@@ -1,31 +1,20 @@
-%binary tree
-binary_tree(nil).
-binary_tree(bt(Left, _, Right)):-
-    binary_tree(Left),
-    binary_tree(Right).
+% post order traversal from in order and pre order traversal
 
-preorder(nil, []).
-preorder(bt(Left, Root, Right), L):-
-    preorder(Left, L1),
-    preorder(Right, L2),
-    append([Root], L1, LRo),
-    append(LRo, L2, L).
+post_from_pre_in([], [], []).
+post_from_pre_in([X|Pre], In, Post):-
+    divide_subtreex(X, In, Leftin, Rightin),
+    length(Leftin, L),
+    divide_subtreel(L, Pre, Leftpre, Rightpre),
+    post_from_pre_in(Rightpre, Rightin, Rightpost),
+    post_from_pre_in(Leftpre, Leftin, Leftpost),
+    append(Leftpost, Rightpost, T),
+    append(T, [X], Post).
 
-inorder(nil, []).
-inorder(bt(Left, Root, Right), L):-
-    inorder(Left, L1),
-    inorder(Right, L2),
-    append(L1, [Root], LR),
-    append(LR, L2, L).
+divide_subtreel(0, L, [], L).
+divide_subtreel(N, [X|L], [X|L1], L2):-
+    N1 is N - 1,
+    divide_subtreel(N1, L, L1, L2).
 
-postorder(nil, []).
-postorder(bt(Left, Root, Right), L):-
-    postorder(Left, L1),
-    postorder(Right, L2),
-    append(L1, L2, LR),
-    append(LR, [Root], L).
-
-postgivenprein(Lpre, Lin, Lpost):-
-    preorder(Bt, Lpre),
-    inorder(Bt, Lin),
-    postorder(Bt, Lpost).
+divide_subtreex(X, [X|L], [], L).
+divide_subtreex(X, [Y|L], [Y|L1], L2):-
+    divide_subtreex(X, L, L1, L2).
