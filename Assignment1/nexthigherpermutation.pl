@@ -1,21 +1,16 @@
-not(P):- 
-    (call(P) -> fail ; true). 
+next_higher_permutation1(L, L1):-
+	higher_permutation(L, L1),
+	not(far_higher_permutation(L,L1)).
+	
+higher_permutation(L, L1):-
+	permutation(L, L1),
+	higher(L1, L).
 
-nexthigherpermutation(L1, L):-
-    higherpermutation(L1, L),
-    not(farhigherpermutation(L1, L)).
-
-higherpermutation(L1, L):-
-    permutatelist(L1, L),
-    higher(L, L1).
-
-higher([H1|T1], [H|T]):-
-    H1 > H,
-    !.
-
-higher([H|T1], [H|T]):-
-    higher(T1, T).
-
-farhigherpermutation(L1, L):-
-    higherpermutation(L2, L),
-    higher(L1, L2).
+higher([X1|_], [X2|_]):-
+	X1 > X2, !.
+higher([X|L1], [X|L2]):-
+	higher(L1, L2).
+	
+far_higher_permutation(L, L1):-
+	higher_permutation(L, L2),
+	higher(L2, L1).
