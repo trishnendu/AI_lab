@@ -78,8 +78,8 @@ class prod_sys{
         map<unsigned int, unsigned int> sol_graph;
 
         prod_sys(){
-            start = {2, 8, 3, 1, 6, 4, 7, 9, 5};
-            goal = {1, 2, 3, 8, 9, 4, 7, 6, 5};
+            start = {8, 1, 2, 9, 3, 4, 5, 7, 6};
+            goal = {1, 2, 3, 4, 5, 6, 7, 8, 9};
             rules = {-3, 3, -1, 1};     // up, down, left, right
             sol_graph[hash_state(start)] = hash_state(start);
         }
@@ -314,7 +314,7 @@ int best_fit_solver(prod_sys &puzzle){
     set<unsigned int> closed_set;
     multiset<pair<int, unsigned int> > open_orderedset;         //maintain an ordered set as we need sorted container
     vector<int> cur_state(puzzle.get_start());
-    open_orderedset.insert(make_pair(puzzle.hm(cur_state), hash_state(cur_state)));
+    open_orderedset.insert(make_pair(puzzle.ht(cur_state), hash_state(cur_state)));
 
     while(true){ 
         if(puzzle.goal_achived(cur_state))    return hash_state(cur_state);
@@ -331,7 +331,7 @@ int best_fit_solver(prod_sys &puzzle){
                 tmp_state[index_blank] = tmp;
                 unsigned int tmp_hashval = hash_state(tmp_state);
                 if(closed_set.find(tmp_hashval) == closed_set.end()){
-                    open_orderedset.insert(make_pair(puzzle.hm(tmp_state), tmp_hashval));
+                    open_orderedset.insert(make_pair(puzzle.ht(tmp_state), tmp_hashval));
                     if(puzzle.sol_graph[tmp_hashval] == 0){
                         puzzle.sol_graph[tmp_hashval] = cur_state_hash;
                     }
@@ -339,7 +339,7 @@ int best_fit_solver(prod_sys &puzzle){
             }
         }
         closed_set.insert(cur_state_hash);
-        open_orderedset.erase(find(open_orderedset.begin(), open_orderedset.end(), make_pair(puzzle.hm(cur_state), cur_state_hash)));
+        open_orderedset.erase(find(open_orderedset.begin(), open_orderedset.end(), make_pair(puzzle.ht(cur_state), cur_state_hash)));
         if(open_orderedset.size() == 0){
             return 0;
         }   
@@ -353,9 +353,16 @@ int astar_solver(prod_sys &puzzle){
     multiset<pair<int, pair<unsigned int, unsigned int> > > open_orderedset;     // maintain orderedset with extra information f(n)
     vector<int> cur_state(puzzle.get_start());
     unsigned int cur_f = 0;
-    open_orderedset.insert(make_pair(cur_f + puzzle.ht(cur_state), make_pair(hash_state(cur_state), cur_f)));
-    while(true){ 
-        if(puzzle.goal_achived(cur_state))    return hash_state(cur_state);
+    unsigned int number_of_comparison = 0, states_reappear = 0;
+
+    open_orderedset.insert(make_pair(cur_f + puzzle.hm(cur_state), make_pair(hash_state(cur_state), cur_f)));
+    while(true){
+        number_of_comparison++; 
+        if(puzzle.goal_achived(cur_state)){
+            cout << "States Reappeared = " << states_reappear << endl;
+            cout << "Number of comparison = " << number_of_comparison << endl; 
+            return hash_state(cur_state);
+        }    
         unsigned cur_state_hash = hash_state(cur_state);
         int index_blank = 0;
         while(cur_state[index_blank] != 9)  index_blank++;
@@ -369,19 +376,21 @@ int astar_solver(prod_sys &puzzle){
                 tmp_state[index_blank] = tmp;
                 unsigned int tmp_hashval = hash_state(tmp_state);
                 if(closed_set.find(tmp_hashval) == closed_set.end()){
-                    open_orderedset.insert(make_pair(puzzle.ht(tmp_state), make_pair(tmp_hashval, cur_f + 1)));
+                    open_orderedset.insert(make_pair(puzzle.hm(tmp_state) + cur_f + 1, make_pair(tmp_hashval, cur_f + 1)));
                     if(puzzle.sol_graph[tmp_hashval] == 0){
                         puzzle.sol_graph[tmp_hashval] = cur_state_hash;
                     }
                 } else if(closed_set[tmp_hashval] > cur_f+1){
+                    states_reappear++;
                     closed_set.erase(closed_set.find(tmp_hashval));
-                    open_orderedset.insert(make_pair(puzzle.ht(tmp_state), make_pair(tmp_hashval, cur_f + 1)));
+                    open_orderedset.insert(make_pair(puzzle.hm(tmp_state) + cur_f + 1, make_pair(tmp_hashval, cur_f + 1)));
                     puzzle.sol_graph[tmp_hashval] = cur_state_hash;
                 }
             }
         }
         closed_set[cur_state_hash] = cur_f;
-        open_orderedset.erase(find(open_orderedset.begin(), open_orderedset.end(), make_pair(puzzle.ht(cur_state), make_pair(cur_state_hash, cur_f))));
+        int h_val = puzzle.hm(cur_state) + cur_f;
+        open_orderedset.erase(find(open_orderedset.begin(), open_orderedset.end(), make_pair(h_val, make_pair(cur_state_hash, cur_f))));
         if(open_orderedset.size() == 0){
             return 0;
         }   
