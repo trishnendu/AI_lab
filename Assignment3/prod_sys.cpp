@@ -78,7 +78,7 @@ class prod_sys{
         map<unsigned int, unsigned int> sol_graph;
 
         prod_sys(){
-            start = {8, 1, 2, 9, 3, 4, 5, 7, 6};
+            start = {1, 2, 3, 8, 9, 4, 7, 6, 5};
             goal = {1, 2, 3, 4, 5, 6, 7, 8, 9};
             rules = {-3, 3, -1, 1};     // up, down, left, right
             sol_graph[hash_state(start)] = hash_state(start);
@@ -406,7 +406,7 @@ int astar_solver(prod_sys &puzzle){
 int main(){
     prod_sys puzzle8;
     unsigned int goal;
-    if(unsigned int goal = astar_solver(puzzle8)) {
+    if(unsigned int goal = bfs_solver(puzzle8)) {
         vector<unsigned int> path;
         cout << "Solved :)" << endl ;
         do{

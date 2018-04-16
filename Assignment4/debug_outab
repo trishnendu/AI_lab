@@ -1,0 +1,21 @@
+minimax best move 0
+x | _ | _
+_ | _ | _
+_ | _ | _
+random best move 1
+x | o | _
+_ | _ | _
+_ | _ | _
+minimax best move 3
+x | o | _
+x | _ | _
+_ | _ | _
+random best move 5
+x | o | _
+x | _ | o
+_ | _ | _
+minimax best move 6
+x | o | _
+x | _ | o
+x | _ | _
+x wins :)
